@@ -1,4 +1,4 @@
-import { useEffect, useState} from "react"
+import React, { useEffect, useState} from "react"
 import api from "../network/networkInterceptor";
 import { dragLaneContainer, dragTodoContainer, dragTodoMainContainer, todoTextContainer } from "./style";
 import { bg } from "../globalStyle";
@@ -90,6 +90,25 @@ const DragTodo = () => {
       const response = api.put(`${updateTodo}/${cardId}`, {todo: editedText});
       void response;
   }
+
+
+  const endScroll = async (e: React.UIEvent<HTMLDivElement>, laneIndex: number) =>{
+    const target = e.target as HTMLDivElement;
+    if(!target) return ; 
+    
+    if (target.scrollTop + target.clientHeight >= target.scrollHeight - 5) {
+       const lastId = lanes[laneIndex].todos[lanes[laneIndex].todos.length - 1].id;
+       const response: FetchTodoListResponse = await api.get(`${fetchTodoList}?skip=${lastId}`);
+
+
+       setLanes(prevLanes =>{
+        const newLanes = prevLanes.map(lane => ({ ...lane, todos: [...lane.todos] }));
+        newLanes[laneIndex].todos = [...newLanes[laneIndex].todos, ...response.todos];
+
+        return newLanes;
+       })
+    }
+  }
   
   
   return (
@@ -101,7 +120,7 @@ const DragTodo = () => {
               {lane.label}
             </div>
           
-            <div  style={todoTextContainer}>
+            <div style={todoTextContainer} onScrollEnd={(e)=>endScroll(e, laneIndex)}>
             {
               lane.todos.map((todo, todoIndex)=>(    
                       <TodoCard todoId={todo?.id} 
