@@ -68,7 +68,7 @@ const DragTodo = () => {
    const deleteCard = (laneIndex: number, cardIndex :number,  cardId: number) =>{
 
     setLanes(prevLanes =>{
-      const newLanes = prevLanes;
+      const newLanes = prevLanes.map(lane => ({ ...lane, todos: [...lane.todos] }));
         newLanes[laneIndex].todos.splice(cardIndex, 1);
         return newLanes;    
     })
@@ -82,7 +82,7 @@ const DragTodo = () => {
       console.log(editedText, laneIndex, cardIndex, cardId);
 
       setLanes(prevLanes=>{
-        const newLanes = prevLanes;
+        const newLanes = prevLanes.map(lane => ({ ...lane, todos: [...lane.todos] }));
         newLanes[laneIndex].todos[cardIndex].todo = editedText;
         return newLanes;
       })

@@ -20,6 +20,7 @@ const editTodo = () =>{
 }
 
 const deleteTodo = () =>{
+  console.log('working')
   setEditable(false);
   deleteCard();
 }
